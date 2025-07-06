@@ -1,0 +1,33 @@
+# Maven
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+/out/
+
+# VS Code
+.vscode/
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+
+# User-specific files
+*.class
+*.swp
+*~
+
+# Environment/config files
+.env
+*.local
+
+# Allure
+.allure/
+/allure-results/
+/allure-report/
