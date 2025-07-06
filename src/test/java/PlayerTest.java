@@ -70,18 +70,6 @@ public class PlayerTest {
         log.info("Login values are the same");
     }
 
-    @Issue("BUG-6")
-    @Test(dataProvider = "invalidPasswords")
-    public void verifyCreatePlayerWithInvalidPasswords(String invalidPassword) {
-        log.debug("Invalid password={}", invalidPassword);
-        var player = TestDataFactory.getDefaultPlayer().toBuilder().password(invalidPassword).build();
-        var response = facade.createPlayer(loginOfSupervisor, player);
-        log.info("Response code of Create player method = {}", response.code());
-        assertThat(response.isSuccessful())
-                .as("Response should not be successful")
-                .isFalse();
-    }
-
     @Test
     public void verifyDeletePlayer() {
         log.info("Start of preconditions");
@@ -134,6 +122,19 @@ public class PlayerTest {
         log.info("All fields were updated");
     }
 
+    @Issue("BUG-6")
+    @Test(dataProvider = "invalidPasswords")
+    public void verifyCreatePlayerWithInvalidPasswords(String invalidPassword) {
+        log.debug("Invalid password={}", invalidPassword);
+        var player = TestDataFactory.getDefaultPlayer().toBuilder().password(invalidPassword).build();
+        var response = facade.createPlayer(loginOfSupervisor, player);
+        log.info("Response code of Create player method = {}", response.code());
+        assertThat(response.isSuccessful())
+                .as("Response should not be successful")
+                .isFalse();
+    }
+
+
     @Issue("BUG-1")
     @Test
     public void verifyUpdateRoleOfPlayer() {
@@ -162,6 +163,23 @@ public class PlayerTest {
 
         log.debug("Invalid age={}", invalidAge);
         var response = facade.updatePlayer(loginOfSupervisor, player.getId(), PlayerWithPasswordDto.builder().age(invalidAge).build());
+        log.info("Response code of Update player method = {}", response.code());
+        assertThat(response.isSuccessful())
+                .as("Response should not be successful")
+                .isFalse();
+    }
+
+    @Issue("BUG-10")
+    @Test
+    public void verifyUserIsNotAbleToDeleteHimself() {
+        log.info("Start of preconditions. Creating player with 'user' role");
+        var userPlayer = TestDataFactory.getDefaultPlayer().toBuilder().role(Role.USER).build();
+        var responseBody = facade.createPlayer(loginOfSupervisor, userPlayer).body();
+        log.info("End of preconditions");
+
+        var login = responseBody.getLogin();
+        var id = responseBody.getId();
+        var response = facade.deletePlayer(login, id);
         log.info("Response code of Update player method = {}", response.code());
         assertThat(response.isSuccessful())
                 .as("Response should not be successful")
